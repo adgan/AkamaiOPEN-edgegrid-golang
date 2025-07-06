@@ -11,6 +11,15 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
+type LogType string
+
+const (
+	LogTypeCdn                     LogType = "cdn"
+	LogTypeEdgeWorkers             LogType = "edgeworkers"
+	LogTypeEdgeDNS                 LogType = "edns"
+	LogTypeGlobalTrafficManagement LogType = "gtm"
+)
+
 type (
 	// GetPropertiesRequest contains parameters necessary to send a GetProperties request
 	GetPropertiesRequest struct {
@@ -19,6 +28,7 @@ type (
 
 	// GetDatasetFieldsRequest contains parameters necessary to send a GetDatasetFields request
 	GetDatasetFieldsRequest struct {
+		LogType   LogType
 		ProductID *string
 	}
 
@@ -91,7 +101,8 @@ func (d *ds) GetDatasetFields(ctx context.Context, params GetDatasetFieldsReques
 	logger := d.Log(ctx)
 	logger.Debug("GetDatasetFields")
 
-	uri, err := url.Parse("/datastream-config-api/v2/log/datasets-fields")
+	uri, err := url.Parse(fmt.Sprintf("/datastream-config-api/v3/log/%s/datasets-fields",
+		params.LogType))
 	if err != nil {
 		return nil, fmt.Errorf("%w: parsing URL: %s", ErrGetDatasetFields, err)
 	}

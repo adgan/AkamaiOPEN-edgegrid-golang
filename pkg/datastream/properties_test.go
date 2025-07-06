@@ -186,8 +186,9 @@ func TestDs_GetDatasetFields(t *testing.T) {
 		expectedResponse *DataSets
 		withError        error
 	}{
-		"200 OK": {
+		"CDN: 200 OK": {
 			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeCdn,
 				ProductID: nil,
 			},
 			responseStatus: http.StatusOK,
@@ -218,7 +219,7 @@ func TestDs_GetDatasetFields(t *testing.T) {
     ]
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/datasets-fields",
+			expectedPath: "/datastream-config-api/v3/log/cdn/datasets-fields",
 			expectedResponse: &DataSets{
 				DataSetFields: []DataSetField{
 					{
@@ -245,8 +246,11 @@ func TestDs_GetDatasetFields(t *testing.T) {
 				},
 			},
 		},
-		"validation error - invalid product id": {
-			request:        GetDatasetFieldsRequest{ProductID: ptr.To("INVALID_PROD_ID")},
+		"CDN: validation error - invalid product id": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeCdn,
+				ProductID: ptr.To("INVALID_PROD_ID"),
+			},
 			responseStatus: http.StatusBadRequest,
 			responseBody: `
 {
@@ -265,7 +269,300 @@ func TestDs_GetDatasetFields(t *testing.T) {
     "type": "bad-request"
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/datasets-fields?productId=INVALID_PROD_ID",
+			expectedPath: "/datastream-config-api/v3/log/cdn/datasets-fields?productId=INVALID_PROD_ID",
+			withError: &Error{
+				Type:       "bad-request",
+				Title:      "Bad Request",
+				Instance:   "6e067164-4a61-429a-abaf-87452fd47036",
+				StatusCode: http.StatusBadRequest,
+				Errors: []RequestErrors{
+					{
+						Type:   "bad-request",
+						Title:  "Bad Request",
+						Detail: "Invalid product ID. Provide the correct product ID and try again.",
+					},
+				},
+			},
+		},
+		"EdgeDNS: 200 OK": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeEdgeDNS,
+				ProductID: nil,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "datasetFields": [
+        {
+            "datasetFieldDescription": "datasetFieldDescription_1",
+            "datasetFieldGroup": "datasetFieldGroup_1",
+            "datasetFieldId": 1000,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_1",
+            "datasetFieldName": "datasetFieldName_1"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_2",
+            "datasetFieldGroup": "datasetFieldGroup_2",
+            "datasetFieldId": 1001,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_2",
+            "datasetFieldName": "datasetFieldName_2"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_3",
+            "datasetFieldGroup": "datasetFieldGroup_3",
+            "datasetFieldId": 1002,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_3",
+            "datasetFieldName": "datasetFieldName_3"
+        }
+    ]
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edns/datasets-fields",
+			expectedResponse: &DataSets{
+				DataSetFields: []DataSetField{
+					{
+						DatasetFieldID:          1000,
+						DatasetFieldName:        "datasetFieldName_1",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_1",
+						DatasetFieldGroup:       "datasetFieldGroup_1",
+						DatasetFieldDescription: "datasetFieldDescription_1",
+					},
+					{
+						DatasetFieldID:          1001,
+						DatasetFieldName:        "datasetFieldName_2",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_2",
+						DatasetFieldGroup:       "datasetFieldGroup_2",
+						DatasetFieldDescription: "datasetFieldDescription_2",
+					},
+					{
+						DatasetFieldID:          1002,
+						DatasetFieldName:        "datasetFieldName_3",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_3",
+						DatasetFieldGroup:       "datasetFieldGroup_3",
+						DatasetFieldDescription: "datasetFieldDescription_3",
+					},
+				},
+			},
+		},
+		"EdgeDNS: validation error - invalid product id": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeEdgeDNS,
+				ProductID: ptr.To("INVALID_PROD_ID")},
+			responseStatus: http.StatusBadRequest,
+			responseBody: `
+{
+    "errors": [
+        {
+            "detail": "Invalid product ID. Provide the correct product ID and try again.", 
+            "problemId": "800a7291-c694-434a-99b7-8940d788239a", 
+            "title": "Bad Request", 
+            "type": "bad-request"
+        }
+    ], 
+    "instance": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "problemId": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "status": 400, 
+    "title": "Bad Request", 
+    "type": "bad-request"
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edns/datasets-fields?productId=INVALID_PROD_ID",
+			withError: &Error{
+				Type:       "bad-request",
+				Title:      "Bad Request",
+				Instance:   "6e067164-4a61-429a-abaf-87452fd47036",
+				StatusCode: http.StatusBadRequest,
+				Errors: []RequestErrors{
+					{
+						Type:   "bad-request",
+						Title:  "Bad Request",
+						Detail: "Invalid product ID. Provide the correct product ID and try again.",
+					},
+				},
+			},
+		},
+		"EdgeWorkers: 200 OK": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeEdgeWorkers,
+				ProductID: nil,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "datasetFields": [
+        {
+            "datasetFieldDescription": "datasetFieldDescription_1",
+            "datasetFieldGroup": "datasetFieldGroup_1",
+            "datasetFieldId": 1000,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_1",
+            "datasetFieldName": "datasetFieldName_1"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_2",
+            "datasetFieldGroup": "datasetFieldGroup_2",
+            "datasetFieldId": 1001,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_2",
+            "datasetFieldName": "datasetFieldName_2"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_3",
+            "datasetFieldGroup": "datasetFieldGroup_3",
+            "datasetFieldId": 1002,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_3",
+            "datasetFieldName": "datasetFieldName_3"
+        }
+    ]
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edgeworkers/datasets-fields",
+			expectedResponse: &DataSets{
+				DataSetFields: []DataSetField{
+					{
+						DatasetFieldID:          1000,
+						DatasetFieldName:        "datasetFieldName_1",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_1",
+						DatasetFieldGroup:       "datasetFieldGroup_1",
+						DatasetFieldDescription: "datasetFieldDescription_1",
+					},
+					{
+						DatasetFieldID:          1001,
+						DatasetFieldName:        "datasetFieldName_2",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_2",
+						DatasetFieldGroup:       "datasetFieldGroup_2",
+						DatasetFieldDescription: "datasetFieldDescription_2",
+					},
+					{
+						DatasetFieldID:          1002,
+						DatasetFieldName:        "datasetFieldName_3",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_3",
+						DatasetFieldGroup:       "datasetFieldGroup_3",
+						DatasetFieldDescription: "datasetFieldDescription_3",
+					},
+				},
+			},
+		},
+		"EdgeWorkers: validation error - invalid product id": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeEdgeWorkers,
+				ProductID: ptr.To("INVALID_PROD_ID"),
+			},
+			responseStatus: http.StatusBadRequest,
+			responseBody: `
+{
+    "errors": [
+        {
+            "detail": "Invalid product ID. Provide the correct product ID and try again.", 
+            "problemId": "800a7291-c694-434a-99b7-8940d788239a", 
+            "title": "Bad Request", 
+            "type": "bad-request"
+        }
+    ], 
+    "instance": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "problemId": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "status": 400, 
+    "title": "Bad Request", 
+    "type": "bad-request"
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edgeworkers/datasets-fields?productId=INVALID_PROD_ID",
+			withError: &Error{
+				Type:       "bad-request",
+				Title:      "Bad Request",
+				Instance:   "6e067164-4a61-429a-abaf-87452fd47036",
+				StatusCode: http.StatusBadRequest,
+				Errors: []RequestErrors{
+					{
+						Type:   "bad-request",
+						Title:  "Bad Request",
+						Detail: "Invalid product ID. Provide the correct product ID and try again.",
+					},
+				},
+			},
+		},
+		"GTM: 200 OK": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeGlobalTrafficManagement,
+				ProductID: nil,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "datasetFields": [
+        {
+            "datasetFieldDescription": "datasetFieldDescription_1",
+            "datasetFieldGroup": "datasetFieldGroup_1",
+            "datasetFieldId": 1000,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_1",
+            "datasetFieldName": "datasetFieldName_1"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_2",
+            "datasetFieldGroup": "datasetFieldGroup_2",
+            "datasetFieldId": 1001,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_2",
+            "datasetFieldName": "datasetFieldName_2"
+        },
+        {
+            "datasetFieldDescription": "datasetFieldDescription_3",
+            "datasetFieldGroup": "datasetFieldGroup_3",
+            "datasetFieldId": 1002,
+            "datasetFieldJsonKey": "datasetFieldJsonKey_3",
+            "datasetFieldName": "datasetFieldName_3"
+        }
+    ]
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/gtm/datasets-fields",
+			expectedResponse: &DataSets{
+				DataSetFields: []DataSetField{
+					{
+						DatasetFieldID:          1000,
+						DatasetFieldName:        "datasetFieldName_1",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_1",
+						DatasetFieldGroup:       "datasetFieldGroup_1",
+						DatasetFieldDescription: "datasetFieldDescription_1",
+					},
+					{
+						DatasetFieldID:          1001,
+						DatasetFieldName:        "datasetFieldName_2",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_2",
+						DatasetFieldGroup:       "datasetFieldGroup_2",
+						DatasetFieldDescription: "datasetFieldDescription_2",
+					},
+					{
+						DatasetFieldID:          1002,
+						DatasetFieldName:        "datasetFieldName_3",
+						DatasetFieldJsonKey:     "datasetFieldJsonKey_3",
+						DatasetFieldGroup:       "datasetFieldGroup_3",
+						DatasetFieldDescription: "datasetFieldDescription_3",
+					},
+				},
+			},
+		},
+		"GTM: validation error - invalid product id": {
+			request: GetDatasetFieldsRequest{
+				LogType:   LogTypeGlobalTrafficManagement,
+				ProductID: ptr.To("INVALID_PROD_ID"),
+			},
+			responseStatus: http.StatusBadRequest,
+			responseBody: `
+{
+    "errors": [
+        {
+            "detail": "Invalid product ID. Provide the correct product ID and try again.", 
+            "problemId": "800a7291-c694-434a-99b7-8940d788239a", 
+            "title": "Bad Request", 
+            "type": "bad-request"
+        }
+    ], 
+    "instance": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "problemId": "6e067164-4a61-429a-abaf-87452fd47036", 
+    "status": 400, 
+    "title": "Bad Request", 
+    "type": "bad-request"
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/gtm/datasets-fields?productId=INVALID_PROD_ID",
 			withError: &Error{
 				Type:       "bad-request",
 				Title:      "Bad Request",
