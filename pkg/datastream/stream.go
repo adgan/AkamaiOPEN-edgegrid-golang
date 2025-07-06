@@ -290,6 +290,11 @@ func (d *ds) CreateStream(ctx context.Context, params CreateStreamRequest) (*Det
 		return nil, fmt.Errorf("%s: %w: %s", ErrCreateStream, ErrStructValidation, err)
 	}
 
+	// Fall back to CDN log type if not specified to maintain backward compatibility
+	if params.LogType == "" {
+		params.LogType = LogTypeCdn
+	}
+
 	uri, err := url.Parse(
 		fmt.Sprintf("/datastream-config-api/v3/log/%s/streams",
 			params.LogType))
@@ -326,6 +331,11 @@ func (d *ds) GetStream(ctx context.Context, params GetStreamRequest) (*DetailedS
 
 	if err := params.Validate(); err != nil {
 		return nil, fmt.Errorf("%s: %w: %s", ErrGetStream, ErrStructValidation, err)
+	}
+
+	// Fall back to CDN log type if not specified to maintain backward compatibility
+	if params.LogType == "" {
+		params.LogType = LogTypeCdn
 	}
 
 	uri, err := url.Parse(fmt.Sprintf(
@@ -370,6 +380,11 @@ func (d *ds) UpdateStream(ctx context.Context, params UpdateStreamRequest) (*Det
 		return nil, fmt.Errorf("%s: %w: %s", ErrUpdateStream, ErrStructValidation, err)
 	}
 
+	// Fall back to CDN log type if not specified to maintain backward compatibility
+	if params.LogType == "" {
+		params.LogType = LogTypeCdn
+	}
+
 	uri, err := url.Parse(fmt.Sprintf("/datastream-config-api/v3/log/%s/streams/%d",
 		params.LogType,
 		params.StreamID))
@@ -408,6 +423,11 @@ func (d *ds) DeleteStream(ctx context.Context, params DeleteStreamRequest) error
 		return fmt.Errorf("%s: %w: %s", ErrDeleteStream, ErrStructValidation, err)
 	}
 
+	// Fall back to CDN log type if not specified to maintain backward compatibility
+	if params.LogType == "" {
+		params.LogType = LogTypeCdn
+	}
+
 	uri, err := url.Parse(fmt.Sprintf(
 		"/datastream-config-api/v3/log/%s/streams/%d",
 		params.LogType,
@@ -438,6 +458,11 @@ func (d *ds) DeleteStream(ctx context.Context, params DeleteStreamRequest) error
 func (d *ds) ListStreams(ctx context.Context, params ListStreamsRequest) ([]StreamDetails, error) {
 	logger := d.Log(ctx)
 	logger.Debug("ListStreams")
+
+	// Fall back to CDN log type if not specified to maintain backward compatibility
+	if params.LogType == "" {
+		params.LogType = LogTypeCdn
+	}
 
 	uri, err := url.Parse(
 		fmt.Sprintf("/datastream-config-api/v3/log/%s/streams",

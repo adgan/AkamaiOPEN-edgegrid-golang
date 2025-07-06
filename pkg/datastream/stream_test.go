@@ -640,6 +640,128 @@ func TestDs_GetStream(t *testing.T) {
 			},
 		},
 
+		"200 OK with fallback": {
+			request: GetStreamRequest{
+				StreamID: 2,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "contractId": "P-1324", 
+    "createdBy": "sample_username", 
+    "createdDate": "2022-11-04T00:49:45Z", 
+    "datasetFields": [
+        {
+            "datasetFieldId":1000,
+            "datasetFieldName":"dataset_field_name_1",
+            "datasetFieldJsonKey":"dataset_field_json_key_1"
+        },
+        {
+            "datasetFieldId":1002,
+            "datasetFieldName":"dataset_field_name_2",
+            "datasetFieldJsonKey":"dataset_field_json_key_2"
+        },
+        {
+            "datasetFieldId":1082,
+            "datasetFieldName":"dataset_field_name_3",
+            "datasetFieldJsonKey":"dataset_field_json_key_3"
+        }
+    ], 
+    "deliveryConfiguration": {
+        "fieldDelimiter": "SPACE", 
+        "format": "STRUCTURED", 
+        "frequency": {
+            "intervalInSeconds": 30
+        }, 
+        "uploadFilePrefix": "ak", 
+        "uploadFileSuffix": "ds"
+    }, 
+    "destination": {
+        "bucket": "sample_bucket", 
+        "compressLogs": true, 
+        "destinationType": "S3", 
+        "displayName": "sample_display_name", 
+        "path": "/sample_path", 
+        "region": "us-east-1"
+    },
+    "groupId": 1234, 
+    "latestVersion": 2, 
+    "modifiedBy": "sample_username2", 
+    "modifiedDate": "2022-11-04T02:14:29Z", 
+    "notificationEmails": [
+        "sample_username@akamai.com"
+    ], 
+    "productId": "Adaptive_Media_Delivery", 
+    "properties": [
+        {
+            "propertyId": 1234, 
+            "propertyName": "sample.com"
+        }
+    ], 
+    "streamId": 2, 
+    "streamName": "ds2-sample-name", 
+    "streamStatus": "ACTIVATED", 
+    "streamVersion": 2
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/2",
+			expectedResponse: &DetailedStreamVersion{
+				StreamStatus: StreamStatusActivated,
+				DeliveryConfiguration: DeliveryConfiguration{
+					Delimiter: DelimiterTypePtr(DelimiterTypeSpace),
+					Format:    FormatTypeStructured,
+					Frequency: Frequency{
+						IntervalInSeconds: IntervalInSeconds30,
+					},
+					UploadFilePrefix: "ak",
+					UploadFileSuffix: "ds",
+				},
+				Destination: Destination{
+					CompressLogs:    true,
+					DisplayName:     "sample_display_name",
+					DestinationType: DestinationTypeS3,
+					Path:            "/sample_path",
+					Bucket:          "sample_bucket",
+					Region:          "us-east-1",
+				},
+				ContractID:  "P-1324",
+				CreatedBy:   "sample_username",
+				CreatedDate: "2022-11-04T00:49:45Z",
+				DatasetFields: []DataSetField{
+					{
+						DatasetFieldID:      1000,
+						DatasetFieldName:    "dataset_field_name_1",
+						DatasetFieldJsonKey: "dataset_field_json_key_1",
+					},
+					{
+						DatasetFieldID:      1002,
+						DatasetFieldName:    "dataset_field_name_2",
+						DatasetFieldJsonKey: "dataset_field_json_key_2",
+					},
+					{
+						DatasetFieldID:      1082,
+						DatasetFieldName:    "dataset_field_name_3",
+						DatasetFieldJsonKey: "dataset_field_json_key_3",
+					},
+				},
+				NotificationEmails: []string{"sample_username@akamai.com"},
+				GroupID:            1234,
+				ModifiedBy:         "sample_username2",
+				ModifiedDate:       "2022-11-04T02:14:29Z",
+				ProductID:          "Adaptive_Media_Delivery",
+				Properties: []Property{
+					{
+						PropertyID:   1234,
+						PropertyName: "sample.com",
+					},
+				},
+				StreamID:      2,
+				StreamName:    "ds2-sample-name",
+				StreamVersion: 2,
+				LatestVersion: 2,
+			},
+		},
+
 		"validation error": {
 			request: GetStreamRequest{},
 			withError: func(t *testing.T, err error) {
