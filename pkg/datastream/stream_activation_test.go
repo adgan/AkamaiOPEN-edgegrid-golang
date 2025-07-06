@@ -20,8 +20,11 @@ func TestDs_ActivateStream(t *testing.T) {
 		expectedResponse *DetailedStreamVersion
 		withError        error
 	}{
-		"200 OK": {
-			request:        ActivateStreamRequest{StreamID: 3},
+		"CDN 200 OK": {
+			request: ActivateStreamRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 3,
+			},
 			responseStatus: http.StatusOK,
 			responseBody: `
 {
@@ -83,7 +86,379 @@ func TestDs_ActivateStream(t *testing.T) {
     "streamVersion": 2
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/3/activate",
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/3/activate",
+			expectedResponse: &DetailedStreamVersion{
+				CollectMidgress: true,
+				StreamStatus:    StreamStatusActivating,
+				DeliveryConfiguration: DeliveryConfiguration{
+					Delimiter: DelimiterTypePtr(DelimiterTypeSpace),
+					Format:    FormatTypeStructured,
+					Frequency: Frequency{
+						IntervalInSeconds: IntervalInSeconds30,
+					},
+					UploadFilePrefix: "ak",
+					UploadFileSuffix: "ds",
+				},
+				Destination: Destination{
+					CompressLogs:    true,
+					DisplayName:     "sample_display_name",
+					DestinationType: DestinationTypeS3,
+					Path:            "/sample_path",
+					Bucket:          "sample_bucket",
+					Region:          "us-east-1",
+				},
+				ContractID:  "P-1324",
+				CreatedBy:   "sample_username",
+				CreatedDate: "2022-11-04T00:49:45Z",
+				DatasetFields: []DataSetField{
+					{
+						DatasetFieldID:      1000,
+						DatasetFieldName:    "dataset_field_name_1",
+						DatasetFieldJsonKey: "dataset_field_json_key_1",
+					},
+					{
+						DatasetFieldID:      1002,
+						DatasetFieldName:    "dataset_field_name_2",
+						DatasetFieldJsonKey: "dataset_field_json_key_2",
+					},
+					{
+						DatasetFieldID:      1082,
+						DatasetFieldName:    "dataset_field_name_3",
+						DatasetFieldJsonKey: "dataset_field_json_key_3",
+					},
+				},
+				NotificationEmails: []string{"sample_username@akamai.com"},
+				GroupID:            1234,
+				ModifiedBy:         "sample_username2",
+				ModifiedDate:       "2022-11-04T02:14:29Z",
+				ProductID:          "Adaptive_Media_Delivery",
+				Properties: []Property{
+					{
+						PropertyID:   1234,
+						PropertyName: "sample.com",
+					},
+				},
+				StreamID:      3,
+				StreamName:    "ds2-sample-name",
+				StreamVersion: 2,
+				LatestVersion: 2,
+			},
+		},
+		"EdgeDNS 200 OK": {
+			request: ActivateStreamRequest{
+				LogType:  LogTypeEdgeDNS,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "contractId": "P-1324", 
+    "createdBy": "sample_username", 
+    "createdDate": "2022-11-04T00:49:45Z", 
+    "collectMidgress": true,
+    "datasetFields": [
+        {
+            "datasetFieldId":1000,
+            "datasetFieldName":"dataset_field_name_1",
+            "datasetFieldJsonKey":"dataset_field_json_key_1"
+        },
+        {
+            "datasetFieldId":1002,
+            "datasetFieldName":"dataset_field_name_2",
+            "datasetFieldJsonKey":"dataset_field_json_key_2"
+        },
+        {
+            "datasetFieldId":1082,
+            "datasetFieldName":"dataset_field_name_3",
+            "datasetFieldJsonKey":"dataset_field_json_key_3"
+        }
+    ], 
+    "deliveryConfiguration": {
+        "fieldDelimiter": "SPACE", 
+        "format": "STRUCTURED", 
+        "frequency": {
+            "intervalInSeconds": 30
+        }, 
+        "uploadFilePrefix": "ak", 
+        "uploadFileSuffix": "ds"
+    }, 
+    "destination": {
+        "bucket": "sample_bucket", 
+        "compressLogs": true, 
+        "destinationType": "S3", 
+        "displayName": "sample_display_name", 
+        "path": "/sample_path", 
+        "region": "us-east-1"
+    },
+    "groupId": 1234, 
+    "latestVersion": 2, 
+    "modifiedBy": "sample_username2", 
+    "modifiedDate": "2022-11-04T02:14:29Z", 
+    "notificationEmails": [
+        "sample_username@akamai.com"
+    ], 
+    "productId": "Adaptive_Media_Delivery", 
+    "properties": [
+        {
+            "propertyId": 1234, 
+            "propertyName": "sample.com"
+        }
+    ], 
+    "streamId": 3, 
+    "streamName": "ds2-sample-name", 
+    "streamStatus": "ACTIVATING", 
+    "streamVersion": 2
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edns/streams/3/activate",
+			expectedResponse: &DetailedStreamVersion{
+				CollectMidgress: true,
+				StreamStatus:    StreamStatusActivating,
+				DeliveryConfiguration: DeliveryConfiguration{
+					Delimiter: DelimiterTypePtr(DelimiterTypeSpace),
+					Format:    FormatTypeStructured,
+					Frequency: Frequency{
+						IntervalInSeconds: IntervalInSeconds30,
+					},
+					UploadFilePrefix: "ak",
+					UploadFileSuffix: "ds",
+				},
+				Destination: Destination{
+					CompressLogs:    true,
+					DisplayName:     "sample_display_name",
+					DestinationType: DestinationTypeS3,
+					Path:            "/sample_path",
+					Bucket:          "sample_bucket",
+					Region:          "us-east-1",
+				},
+				ContractID:  "P-1324",
+				CreatedBy:   "sample_username",
+				CreatedDate: "2022-11-04T00:49:45Z",
+				DatasetFields: []DataSetField{
+					{
+						DatasetFieldID:      1000,
+						DatasetFieldName:    "dataset_field_name_1",
+						DatasetFieldJsonKey: "dataset_field_json_key_1",
+					},
+					{
+						DatasetFieldID:      1002,
+						DatasetFieldName:    "dataset_field_name_2",
+						DatasetFieldJsonKey: "dataset_field_json_key_2",
+					},
+					{
+						DatasetFieldID:      1082,
+						DatasetFieldName:    "dataset_field_name_3",
+						DatasetFieldJsonKey: "dataset_field_json_key_3",
+					},
+				},
+				NotificationEmails: []string{"sample_username@akamai.com"},
+				GroupID:            1234,
+				ModifiedBy:         "sample_username2",
+				ModifiedDate:       "2022-11-04T02:14:29Z",
+				ProductID:          "Adaptive_Media_Delivery",
+				Properties: []Property{
+					{
+						PropertyID:   1234,
+						PropertyName: "sample.com",
+					},
+				},
+				StreamID:      3,
+				StreamName:    "ds2-sample-name",
+				StreamVersion: 2,
+				LatestVersion: 2,
+			},
+		},
+		"EdgeWorkers 200 OK": {
+			request: ActivateStreamRequest{
+				LogType:  LogTypeEdgeWorkers,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "contractId": "P-1324", 
+    "createdBy": "sample_username", 
+    "createdDate": "2022-11-04T00:49:45Z", 
+    "collectMidgress": true,
+    "datasetFields": [
+        {
+            "datasetFieldId":1000,
+            "datasetFieldName":"dataset_field_name_1",
+            "datasetFieldJsonKey":"dataset_field_json_key_1"
+        },
+        {
+            "datasetFieldId":1002,
+            "datasetFieldName":"dataset_field_name_2",
+            "datasetFieldJsonKey":"dataset_field_json_key_2"
+        },
+        {
+            "datasetFieldId":1082,
+            "datasetFieldName":"dataset_field_name_3",
+            "datasetFieldJsonKey":"dataset_field_json_key_3"
+        }
+    ], 
+    "deliveryConfiguration": {
+        "fieldDelimiter": "SPACE", 
+        "format": "STRUCTURED", 
+        "frequency": {
+            "intervalInSeconds": 30
+        }, 
+        "uploadFilePrefix": "ak", 
+        "uploadFileSuffix": "ds"
+    }, 
+    "destination": {
+        "bucket": "sample_bucket", 
+        "compressLogs": true, 
+        "destinationType": "S3", 
+        "displayName": "sample_display_name", 
+        "path": "/sample_path", 
+        "region": "us-east-1"
+    },
+    "groupId": 1234, 
+    "latestVersion": 2, 
+    "modifiedBy": "sample_username2", 
+    "modifiedDate": "2022-11-04T02:14:29Z", 
+    "notificationEmails": [
+        "sample_username@akamai.com"
+    ], 
+    "productId": "Adaptive_Media_Delivery", 
+    "properties": [
+        {
+            "propertyId": 1234, 
+            "propertyName": "sample.com"
+        }
+    ], 
+    "streamId": 3, 
+    "streamName": "ds2-sample-name", 
+    "streamStatus": "ACTIVATING", 
+    "streamVersion": 2
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/edgeworkers/streams/3/activate",
+			expectedResponse: &DetailedStreamVersion{
+				CollectMidgress: true,
+				StreamStatus:    StreamStatusActivating,
+				DeliveryConfiguration: DeliveryConfiguration{
+					Delimiter: DelimiterTypePtr(DelimiterTypeSpace),
+					Format:    FormatTypeStructured,
+					Frequency: Frequency{
+						IntervalInSeconds: IntervalInSeconds30,
+					},
+					UploadFilePrefix: "ak",
+					UploadFileSuffix: "ds",
+				},
+				Destination: Destination{
+					CompressLogs:    true,
+					DisplayName:     "sample_display_name",
+					DestinationType: DestinationTypeS3,
+					Path:            "/sample_path",
+					Bucket:          "sample_bucket",
+					Region:          "us-east-1",
+				},
+				ContractID:  "P-1324",
+				CreatedBy:   "sample_username",
+				CreatedDate: "2022-11-04T00:49:45Z",
+				DatasetFields: []DataSetField{
+					{
+						DatasetFieldID:      1000,
+						DatasetFieldName:    "dataset_field_name_1",
+						DatasetFieldJsonKey: "dataset_field_json_key_1",
+					},
+					{
+						DatasetFieldID:      1002,
+						DatasetFieldName:    "dataset_field_name_2",
+						DatasetFieldJsonKey: "dataset_field_json_key_2",
+					},
+					{
+						DatasetFieldID:      1082,
+						DatasetFieldName:    "dataset_field_name_3",
+						DatasetFieldJsonKey: "dataset_field_json_key_3",
+					},
+				},
+				NotificationEmails: []string{"sample_username@akamai.com"},
+				GroupID:            1234,
+				ModifiedBy:         "sample_username2",
+				ModifiedDate:       "2022-11-04T02:14:29Z",
+				ProductID:          "Adaptive_Media_Delivery",
+				Properties: []Property{
+					{
+						PropertyID:   1234,
+						PropertyName: "sample.com",
+					},
+				},
+				StreamID:      3,
+				StreamName:    "ds2-sample-name",
+				StreamVersion: 2,
+				LatestVersion: 2,
+			},
+		},
+		"GTM 200 OK": {
+			request: ActivateStreamRequest{
+				LogType:  LogTypeGlobalTrafficManagement,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+{
+    "contractId": "P-1324", 
+    "createdBy": "sample_username", 
+    "createdDate": "2022-11-04T00:49:45Z", 
+    "collectMidgress": true,
+    "datasetFields": [
+        {
+            "datasetFieldId":1000,
+            "datasetFieldName":"dataset_field_name_1",
+            "datasetFieldJsonKey":"dataset_field_json_key_1"
+        },
+        {
+            "datasetFieldId":1002,
+            "datasetFieldName":"dataset_field_name_2",
+            "datasetFieldJsonKey":"dataset_field_json_key_2"
+        },
+        {
+            "datasetFieldId":1082,
+            "datasetFieldName":"dataset_field_name_3",
+            "datasetFieldJsonKey":"dataset_field_json_key_3"
+        }
+    ], 
+    "deliveryConfiguration": {
+        "fieldDelimiter": "SPACE", 
+        "format": "STRUCTURED", 
+        "frequency": {
+            "intervalInSeconds": 30
+        }, 
+        "uploadFilePrefix": "ak", 
+        "uploadFileSuffix": "ds"
+    }, 
+    "destination": {
+        "bucket": "sample_bucket", 
+        "compressLogs": true, 
+        "destinationType": "S3", 
+        "displayName": "sample_display_name", 
+        "path": "/sample_path", 
+        "region": "us-east-1"
+    },
+    "groupId": 1234, 
+    "latestVersion": 2, 
+    "modifiedBy": "sample_username2", 
+    "modifiedDate": "2022-11-04T02:14:29Z", 
+    "notificationEmails": [
+        "sample_username@akamai.com"
+    ], 
+    "productId": "Adaptive_Media_Delivery", 
+    "properties": [
+        {
+            "propertyId": 1234, 
+            "propertyName": "sample.com"
+        }
+    ], 
+    "streamId": 3, 
+    "streamName": "ds2-sample-name", 
+    "streamStatus": "ACTIVATING", 
+    "streamVersion": 2
+}
+`,
+			expectedPath: "/datastream-config-api/v3/log/gtm/streams/3/activate",
 			expectedResponse: &DetailedStreamVersion{
 				CollectMidgress: true,
 				StreamStatus:    StreamStatusActivating,
@@ -142,11 +517,16 @@ func TestDs_ActivateStream(t *testing.T) {
 			},
 		},
 		"validation error": {
-			request:   ActivateStreamRequest{},
+			request: ActivateStreamRequest{
+				LogType: LogTypeCdn,
+			},
 			withError: ErrStructValidation,
 		},
 		"400 bad request": {
-			request:        ActivateStreamRequest{StreamID: 123},
+			request: ActivateStreamRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 123,
+			},
 			responseStatus: http.StatusBadRequest,
 			responseBody: `
 {
@@ -164,7 +544,7 @@ func TestDs_ActivateStream(t *testing.T) {
 	]
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/123/activate",
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/123/activate",
 			withError: &Error{
 				Type:       "bad-request",
 				Title:      "Bad Request",
@@ -211,8 +591,11 @@ func TestDs_DeactivateStream(t *testing.T) {
 		expectedResponse *DetailedStreamVersion
 		withError        error
 	}{
-		"200 ok": {
-			request:        DeactivateStreamRequest{StreamID: 3},
+		"CDN 200 ok": {
+			request: DeactivateStreamRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 3,
+			},
 			responseStatus: http.StatusOK,
 			responseBody: `
 {
@@ -274,7 +657,7 @@ func TestDs_DeactivateStream(t *testing.T) {
     "streamVersion": 2
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/3/deactivate",
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/3/deactivate",
 			expectedResponse: &DetailedStreamVersion{
 				CollectMidgress: true,
 				StreamStatus:    StreamStatusDeactivating,
@@ -337,7 +720,9 @@ func TestDs_DeactivateStream(t *testing.T) {
 			withError: ErrStructValidation,
 		},
 		"400 bad request": {
-			request:        DeactivateStreamRequest{StreamID: 123},
+			request: DeactivateStreamRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 123},
 			responseStatus: http.StatusBadRequest,
 			responseBody: `
 {
@@ -355,7 +740,7 @@ func TestDs_DeactivateStream(t *testing.T) {
 	]
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/123/deactivate",
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/123/deactivate",
 			withError: &Error{
 				Type:       "bad-request",
 				Title:      "Bad Request",
@@ -402,8 +787,11 @@ func TestDs_GetActivationHistory(t *testing.T) {
 		expectedResponse []ActivationHistoryEntry
 		withError        error
 	}{
-		"200 OK": {
-			request:        GetActivationHistoryRequest{StreamID: 3},
+		"EdgeWorkers 200 OK": {
+			request: GetActivationHistoryRequest{
+				LogType:  LogTypeEdgeWorkers,
+				StreamID: 3,
+			},
 			responseStatus: http.StatusOK,
 			responseBody: `
 [
@@ -423,7 +811,133 @@ func TestDs_GetActivationHistory(t *testing.T) {
     }
 ]
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/3/activation-history",
+			expectedPath: "/datastream-config-api/v3/log/edgeworkers/streams/3/activation-history",
+			expectedResponse: []ActivationHistoryEntry{
+				{
+					ModifiedBy:    "user1",
+					ModifiedDate:  "16-01-2020 11:07:12 GMT",
+					Status:        StreamStatusDeactivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+				{
+					ModifiedBy:    "user2",
+					ModifiedDate:  "16-01-2020 09:31:02 GMT",
+					Status:        StreamStatusActivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+			},
+		},
+		"EdgeDNS 200 OK": {
+			request: GetActivationHistoryRequest{
+				LogType:  LogTypeEdgeDNS,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+[
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user1",
+        "modifiedDate": "16-01-2020 11:07:12 GMT",
+        "status": "DEACTIVATED"
+    },
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user2",
+        "modifiedDate": "16-01-2020 09:31:02 GMT",
+        "status": "ACTIVATED"
+    }
+]
+`,
+			expectedPath: "/datastream-config-api/v3/log/edns/streams/3/activation-history",
+			expectedResponse: []ActivationHistoryEntry{
+				{
+					ModifiedBy:    "user1",
+					ModifiedDate:  "16-01-2020 11:07:12 GMT",
+					Status:        StreamStatusDeactivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+				{
+					ModifiedBy:    "user2",
+					ModifiedDate:  "16-01-2020 09:31:02 GMT",
+					Status:        StreamStatusActivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+			},
+		},
+		"CDN 200 OK": {
+			request: GetActivationHistoryRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+[
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user1",
+        "modifiedDate": "16-01-2020 11:07:12 GMT",
+        "status": "DEACTIVATED"
+    },
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user2",
+        "modifiedDate": "16-01-2020 09:31:02 GMT",
+        "status": "ACTIVATED"
+    }
+]
+`,
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/3/activation-history",
+			expectedResponse: []ActivationHistoryEntry{
+				{
+					ModifiedBy:    "user1",
+					ModifiedDate:  "16-01-2020 11:07:12 GMT",
+					Status:        StreamStatusDeactivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+				{
+					ModifiedBy:    "user2",
+					ModifiedDate:  "16-01-2020 09:31:02 GMT",
+					Status:        StreamStatusActivated,
+					StreamID:      3,
+					StreamVersion: 2,
+				},
+			},
+		},
+		"GTM 200 OK": {
+			request: GetActivationHistoryRequest{
+				LogType:  LogTypeGlobalTrafficManagement,
+				StreamID: 3,
+			},
+			responseStatus: http.StatusOK,
+			responseBody: `
+[
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user1",
+        "modifiedDate": "16-01-2020 11:07:12 GMT",
+        "status": "DEACTIVATED"
+    },
+    {
+        "streamId": 3,
+        "streamVersion": 2,
+        "modifiedBy": "user2",
+        "modifiedDate": "16-01-2020 09:31:02 GMT",
+        "status": "ACTIVATED"
+    }
+]
+`,
+			expectedPath: "/datastream-config-api/v3/log/gtm/streams/3/activation-history",
 			expectedResponse: []ActivationHistoryEntry{
 				{
 					ModifiedBy:    "user1",
@@ -446,7 +960,10 @@ func TestDs_GetActivationHistory(t *testing.T) {
 			withError: ErrStructValidation,
 		},
 		"400 bad request": {
-			request:        GetActivationHistoryRequest{StreamID: 123},
+			request: GetActivationHistoryRequest{
+				LogType:  LogTypeCdn,
+				StreamID: 123,
+			},
 			responseStatus: http.StatusBadRequest,
 			responseBody: `
 {
@@ -464,7 +981,7 @@ func TestDs_GetActivationHistory(t *testing.T) {
 	]
 }
 `,
-			expectedPath: "/datastream-config-api/v2/log/streams/123/activation-history",
+			expectedPath: "/datastream-config-api/v3/log/cdn/streams/123/activation-history",
 			withError: &Error{
 				Type:       "bad-request",
 				Title:      "Bad Request",

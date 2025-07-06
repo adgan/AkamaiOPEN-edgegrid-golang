@@ -23,6 +23,7 @@ type (
 
 	// ActivateStreamRequest contains parameters necessary to send a ActivateStream request
 	ActivateStreamRequest struct {
+		LogType  LogType
 		StreamID int64
 	}
 
@@ -72,8 +73,10 @@ func (d *ds) ActivateStream(ctx context.Context, params ActivateStreamRequest) (
 	}
 
 	uri, err := url.Parse(fmt.Sprintf(
-		"/datastream-config-api/v2/log/streams/%d/activate",
-		params.StreamID))
+		"/datastream-config-api/v3/log/%s/streams/%d/activate",
+		params.LogType,
+		params.StreamID,
+	))
 	if err != nil {
 		return nil, fmt.Errorf("%w: parsing URL: %s", ErrActivateStream, err)
 	}
@@ -106,7 +109,8 @@ func (d *ds) DeactivateStream(ctx context.Context, params DeactivateStreamReques
 	}
 
 	uri, err := url.Parse(fmt.Sprintf(
-		"/datastream-config-api/v2/log/streams/%d/deactivate",
+		"/datastream-config-api/v3/log/%s/streams/%d/deactivate",
+		params.LogType,
 		params.StreamID))
 	if err != nil {
 		return nil, fmt.Errorf("%w: parsing URL: %s", ErrDeactivateStream, err)
@@ -140,7 +144,8 @@ func (d *ds) GetActivationHistory(ctx context.Context, params GetActivationHisto
 	}
 
 	uri, err := url.Parse(fmt.Sprintf(
-		"/datastream-config-api/v2/log/streams/%d/activation-history",
+		"/datastream-config-api/v3/log/%s/streams/%d/activation-history",
+		params.LogType,
 		params.StreamID))
 	if err != nil {
 		return nil, fmt.Errorf("%w: parsing URL: %s", ErrGetActivationHistory, err)
